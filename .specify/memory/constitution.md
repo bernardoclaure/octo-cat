@@ -1,50 +1,54 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+Version change: none → 1.0.0
+Modified principles:
+  - Added I. Library-First Architecture
+  - Added II. Test-Driven Development
+  - Added III. Integration Testing over Mocks
+  - Added IV. Simplicity Over Abstraction
+  - Added V. API-First REST with OpenAPI
+  - Added VI. Type Safety and Dependency Discipline
+Added sections:
+  - Technology Constraints
+  - Development Workflow
+Templates reviewed:
+  - .specify/templates/plan-template.md ✅ aligned
+  - .specify/templates/spec-template.md ✅ aligned
+  - .specify/templates/tasks-template.md ✅ aligned
+  - .specify/templates/constitution-template.md ✅ used
+Follow-up TODOs: none
+-->
+
+# OctoCAT Supply Chain Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Library-First Architecture
+Every feature begins as an independent reusable library module. Libraries must expose clear APIs, be documented, independently testable, and remain decoupled from application wiring. This prevents one-off code, supports reuse across services, and keeps implementation boundaries explicit.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Test-Driven Development
+Implementation begins only after a failing contract or feature test exists. Tests are written first, validated, then made to pass in a strict red-green-refactor cycle. This enforces correct behavior, catches regressions early, and makes design decisions explicit.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Integration Testing over Mocks
+Real integration tests are the trusted quality gate. Primary behavior must be covered with contract and integration tests against SQLite or equivalent real storage, not mock-only pipelines. Mocks are allowed only for low-level failure injection when real integration is impractical.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Simplicity Over Abstraction
+Prefer direct framework usage and minimal architectural layers. Avoid early abstraction, over-engineered indirection, and permissive patterns that do not clearly reduce complexity. Keep the codebase small, readable, and easy to evolve.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. API-First REST with OpenAPI
+Design the system around a REST API contract with explicit OpenAPI documentation. Every endpoint must be defined, versioned, and discoverable. API design governs implementation and supports clients, automation, and integration consistency.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### VI. Type Safety and Dependency Discipline
+Use TypeScript across the codebase for strong typing and compile-time validation. Add dependencies only when they clearly reduce risk or deliver essential value. Every external package must be evaluated and justified before inclusion.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Technology Constraints
+The project uses TypeScript as the implementation language, SQLite for real integration testing, and REST API patterns with OpenAPI documentation. Minimal dependencies are required; no library may be added without explicit evaluation. The architecture remains library-first, with small reusable modules and clear separation between contract definitions and runtime wiring.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Development Workflow
+Work is driven by contract and feature tests. Every pull request must reference the governing principle(s), include passing integration tests for new behavior, and demonstrate that no unnecessary dependency or abstraction was introduced. Reviews must validate OpenAPI updates, TypeScript correctness, library-first structure, and adherence to integration-test discipline.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+This constitution supersedes informal preferences and becomes the default guide for OctoCAT Supply Chain development. Changes require documentation, peer review, and a versioned amendment entry in this file. Major architecture changes, dependency additions, or API contract updates must be justified against the principles here. All pull requests must verify compliance with these principles before merge.
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+**Version**: 1.0.0 | **Ratified**: 2026-06-24 | **Last Amended**: 2026-06-24
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
