@@ -1,0 +1,19 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "OctoCAT Purchase Order API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/purchase-orders": {
+      "post": {
+        "summary": "Create a purchase order",
+        "responses": {
+          "201": {
+            "description": "Purchase order created"
+          }
+        }
+      }
+    }
+  }
+}
