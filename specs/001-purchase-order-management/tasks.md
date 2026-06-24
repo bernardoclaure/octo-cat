@@ -32,15 +32,15 @@ description: "Task list for Purchase Order Management feature implementation"
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
-- [ ] T006 Setup SQLite schema and repository layer in `backend/src/repositories/purchaseOrderRepository.ts` and `backend/src/repositories/lineItemRepository.ts`
-- [ ] T007 [P] Create PO domain models and shared types in `backend/src/models/purchaseOrder.ts`, `backend/src/models/purchaseOrderLineItem.ts`, and `backend/src/models/userRoles.ts`
-- [ ] T008 [P] Implement backend business services in `backend/src/services/purchaseOrderService.ts`, `backend/src/services/approvalService.ts`, and `backend/src/services/notificationService.ts`
-- [ ] T009 Setup backend API routing and application wiring in `backend/src/routes/purchaseOrderRoutes.ts`, `backend/src/app.ts`, and `backend/src/server.ts`
-- [ ] T010 [P] Configure environment and application configuration in `backend/src/config.ts` and `backend/src/logger.ts`
-- [ ] T011 [P] Implement authentication/authorization scaffolding and role guards in `backend/src/middleware/authMiddleware.ts` and `backend/src/middleware/authorizationMiddleware.ts`
-- [ ] T012 [P] Add OpenAPI/Swagger documentation scaffolding in `backend/src/schemas/purchaseOrderSchemas.ts` and `backend/src/routes/swaggerRoutes.ts`
-- [ ] T013 [P] Implement frontend API client and shared state scaffolding in `frontend/src/api/purchaseOrderApi.ts`, `frontend/src/context/purchaseOrderContext.tsx`, and `frontend/src/services/apiClient.ts`
-- [ ] T014 [P] Create frontend design system scaffolding for reusable UI components in `frontend/src/components/ui/` including `Button.tsx`, `Input.tsx`, and `StatusBadge.tsx`
+- [X] T006 Setup SQLite schema and repository layer in `backend/src/repositories/purchaseOrderRepository.ts` and `backend/src/repositories/lineItemRepository.ts`
+- [X] T007 [P] Create PO domain models and shared types in `backend/src/models/purchaseOrder.ts`, `backend/src/models/purchaseOrderLineItem.ts`, and `backend/src/models/userRoles.ts`
+- [X] T008 [P] Implement backend business services in `backend/src/services/purchaseOrderService.ts`, `backend/src/services/approvalService.ts`, and `backend/src/services/notificationService.ts`
+- [X] T009 Setup backend API routing and application wiring in `backend/src/routes/purchaseOrderRoutes.ts`, `backend/src/app.ts`, and `backend/src/server.ts`
+- [X] T010 [P] Configure environment and application configuration in `backend/src/config.ts` and `backend/src/logger.ts`
+- [X] T011 [P] Implement authentication/authorization scaffolding and role guards in `backend/src/middleware/authMiddleware.ts` and `backend/src/middleware/authorizationMiddleware.ts`
+- [X] T012 [P] Add OpenAPI/Swagger documentation scaffolding in `backend/src/schemas/purchaseOrderSchemas.ts` and `backend/src/routes/swaggerRoutes.ts`
+- [X] T013 [P] Implement frontend API client and shared state scaffolding in `frontend/src/api/purchaseOrderApi.ts`, `frontend/src/context/purchaseOrderContext.tsx`, and `frontend/src/services/apiClient.ts`
+- [X] T014 [P] Create frontend design system scaffolding for reusable UI components in `frontend/src/components/ui/` including `Button.tsx`, `Input.tsx`, and `StatusBadge.tsx`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
