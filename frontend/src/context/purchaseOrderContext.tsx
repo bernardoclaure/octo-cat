@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import {
+  cancelPurchaseOrder,
   createPurchaseOrder,
   getPurchaseOrder,
   updatePurchaseOrder,
@@ -11,6 +12,7 @@ interface PurchaseOrderContextValue {
   createPurchaseOrder: (payload: PurchaseOrderPayload) => Promise<PurchaseOrderResponse>;
   updatePurchaseOrder: (purchaseOrderId: string, payload: PurchaseOrderPayload) => Promise<PurchaseOrderResponse>;
   getPurchaseOrder: (purchaseOrderId: string) => Promise<PurchaseOrderResponse>;
+  cancelPurchaseOrder: (purchaseOrderId: string) => Promise<PurchaseOrderResponse>;
   loading: boolean;
 }
 
@@ -46,8 +48,17 @@ export const PurchaseOrderProvider = ({ children }: { children: ReactNode }) => 
     }
   };
 
+  const cancel = async (purchaseOrderId: string) => {
+    setLoading(true);
+    try {
+      return await cancelPurchaseOrder(purchaseOrderId);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <PurchaseOrderContext.Provider value={{ createPurchaseOrder: create, updatePurchaseOrder: update, getPurchaseOrder: get, loading }}>
+    <PurchaseOrderContext.Provider value={{ createPurchaseOrder: create, updatePurchaseOrder: update, getPurchaseOrder: get, cancelPurchaseOrder: cancel, loading }}>
       {children}
     </PurchaseOrderContext.Provider>
   );

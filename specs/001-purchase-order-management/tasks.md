@@ -126,15 +126,15 @@ description: "Task list for Purchase Order Management feature implementation"
 
 ### Tests for User Story 4
 
-- [ ] T039 [P] [US4] Create contract test for `POST /api/purchase-orders/:purchaseOrderId/cancel` in `backend/tests/contract/test_purchase_order_cancellation.spec.ts`
-- [ ] T040 [P] [US4] Create integration test for cancellation rules in `backend/tests/integration/test_purchase_order_cancellation.spec.ts`
+- [X] T039 [P] [US4] Create contract test for `POST /api/purchase-orders/:purchaseOrderId/cancel` in `backend/tests/contract/test_purchase_order_cancellation.spec.ts`
+- [X] T040 [P] [US4] Create integration test for cancellation rules in `backend/tests/integration/test_purchase_order_cancellation.spec.ts`
 
 ### Implementation for User Story 4
 
-- [ ] T041 [US4] Implement cancellation transition guard in `backend/src/services/purchaseOrderService.ts`
-- [ ] T042 [US4] Add cancel endpoint in `backend/src/routes/purchaseOrderRoutes.ts`
-- [ ] T043 [US4] Add cancel action to `frontend/src/pages/purchase-orders/PurchaseOrderDetail.tsx`
-- [ ] T044 [US4] Add Cancelled status UI in `frontend/src/components/purchase-orders/PurchaseOrderStatusBadge.tsx`
+- [X] T041 [US4] Implement cancellation transition guard in `backend/src/services/purchaseOrderService.ts`
+- [X] T042 [US4] Add cancel endpoint in `backend/src/routes/purchaseOrderRoutes.ts`
+- [X] T043 [US4] Add cancel action to `frontend/src/pages/purchase-orders/PurchaseOrderDetail.tsx`
+- [X] T044 [US4] Add Cancelled status UI in `frontend/src/components/purchase-orders/PurchaseOrderStatusBadge.tsx`
 
 **Checkpoint**: User Story 4 should be independently complete and verifiable
 

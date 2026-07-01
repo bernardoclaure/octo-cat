@@ -61,3 +61,15 @@ export const getPurchaseOrder = async (purchaseOrderId: string): Promise<Purchas
 
   return response.json();
 };
+
+export const cancelPurchaseOrder = async (purchaseOrderId: string): Promise<PurchaseOrderResponse> => {
+  const response = await fetch(`/api/purchase-orders/${purchaseOrderId}/cancel`, {
+    method: 'POST',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Cancel purchase order failed: ${response.status}`);
+  }
+
+  return response.json();
+};

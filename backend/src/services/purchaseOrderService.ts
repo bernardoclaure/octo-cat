@@ -105,6 +105,24 @@ export const submitPurchaseOrder = (purchaseOrderId: string) => {
   };
 };
 
+export const cancelPurchaseOrder = (purchaseOrderId: string) => {
+  const po = getPurchaseOrderById(purchaseOrderId);
+  if (!po || !['Draft', 'Submitted', 'Approved'].includes(po.status)) {
+    return undefined;
+  }
+
+  const now = new Date().toISOString();
+  const updated = setPurchaseOrderStatus(purchaseOrderId, 'Cancelled', now);
+  if (!updated) {
+    return undefined;
+  }
+
+  return {
+    ...updated,
+    lineItems: getLineItems(purchaseOrderId),
+  };
+};
+
 export const approveSubmittedPurchaseOrder = (purchaseOrderId: string, approverId: string) => {
   const result = approvePurchaseOrderByRule(purchaseOrderId, approverId);
   if (!result) {

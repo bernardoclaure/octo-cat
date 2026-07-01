@@ -1,5 +1,13 @@
 import { Router, Request, Response } from 'express';
-import { approveSubmittedPurchaseOrder, createDraftPurchaseOrder, fulfillApprovedPurchaseOrder, getDraftPurchaseOrder, submitPurchaseOrder, updateDraftPurchaseOrder } from '../services/purchaseOrderService';
+import {
+  approveSubmittedPurchaseOrder,
+  cancelPurchaseOrder,
+  createDraftPurchaseOrder,
+  fulfillApprovedPurchaseOrder,
+  getDraftPurchaseOrder,
+  submitPurchaseOrder,
+  updateDraftPurchaseOrder,
+} from '../services/purchaseOrderService';
 
 const router = Router();
 
@@ -52,6 +60,15 @@ router.post('/:purchaseOrderId/fulfill', (req: Request, res: Response) => {
   const po = fulfillApprovedPurchaseOrder(purchaseOrderId);
   if (!po) {
     return res.status(400).json({ error: 'Unable to fulfill purchase order' });
+  }
+  res.json(po);
+});
+
+router.post('/:purchaseOrderId/cancel', (req: Request, res: Response) => {
+  const { purchaseOrderId } = req.params;
+  const po = cancelPurchaseOrder(purchaseOrderId);
+  if (!po) {
+    return res.status(400).json({ error: 'Unable to cancel purchase order' });
   }
   res.json(po);
 });

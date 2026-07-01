@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import { PurchaseOrderProvider } from './context/purchaseOrderContext';
 import PurchaseOrderForm from './pages/purchase-orders/PurchaseOrderForm';
+import PurchaseOrderDetail from './pages/purchase-orders/PurchaseOrderDetail';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/purchase-orders/new" element={<PurchaseOrderForm />} />
+            <Route path="/purchase-orders/:purchaseOrderId" element={<PurchaseOrderDetail />} />
             <Route path="/purchase-orders/:purchaseOrderId/edit" element={<PurchaseOrderForm />} />
           </Routes>
         </div>
