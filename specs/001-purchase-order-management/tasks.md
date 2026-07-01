@@ -79,16 +79,16 @@ description: "Task list for Purchase Order Management feature implementation"
 
 ### Tests for User Story 2
 
-- [ ] T024 [P] [US2] Create contract test for `POST /api/purchase-orders/:purchaseOrderId/submit` in `backend/tests/contract/test_purchase_order_submission.spec.ts`
-- [ ] T025 [P] [US2] Create integration test for PO submission and notification creation in `backend/tests/integration/test_purchase_order_submission.spec.ts`
+- [X] T024 [P] [US2] Create contract test for `POST /api/purchase-orders/:purchaseOrderId/submit` in `backend/tests/contract/test_purchase_order_submission.spec.ts`
+- [X] T025 [P] [US2] Create integration test for PO submission and notification creation in `backend/tests/integration/test_purchase_order_submission.spec.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T026 [P] [US2] Implement PO submission workflow in `backend/src/services/purchaseOrderService.ts`
-- [ ] T027 [US2] Implement supplier notification creation in `backend/src/services/notificationService.ts`
-- [ ] T028 [US2] Add submission endpoint in `backend/src/routes/purchaseOrderRoutes.ts`
+- [X] T026 [P] [US2] Implement PO submission workflow in `backend/src/services/purchaseOrderService.ts`
+- [X] T027 [US2] Implement supplier notification creation in `backend/src/services/notificationService.ts`
+- [X] T028 [US2] Add submission endpoint in `backend/src/routes/purchaseOrderRoutes.ts`
 - [ ] T029 [US2] Add submit action and confirmation to `frontend/src/pages/purchase-orders/PurchaseOrderDetail.tsx`
-- [ ] T030 [US2] Add supplier-facing PO list page in `frontend/src/pages/suppliers/SupplierPurchaseOrders.tsx`
+- [X] T030 [US2] Add supplier-facing PO list page in `frontend/src/pages/suppliers/SupplierPurchaseOrders.tsx`
 
 **Checkpoint**: User Story 2 should be independently testable and complete
 

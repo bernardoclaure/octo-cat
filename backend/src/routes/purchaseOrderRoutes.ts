@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createDraftPurchaseOrder, getDraftPurchaseOrder, updateDraftPurchaseOrder } from '../services/purchaseOrderService';
+import { createDraftPurchaseOrder, getDraftPurchaseOrder, submitPurchaseOrder, updateDraftPurchaseOrder } from '../services/purchaseOrderService';
 
 const router = Router();
 
@@ -24,6 +24,15 @@ router.put('/:purchaseOrderId', (req: Request, res: Response) => {
   const po = updateDraftPurchaseOrder(purchaseOrderId, payload, payload.lineItems);
   if (!po) {
     return res.status(400).json({ error: 'Unable to update purchase order' });
+  }
+  res.json(po);
+});
+
+router.post('/:purchaseOrderId/submit', (req: Request, res: Response) => {
+  const { purchaseOrderId } = req.params;
+  const po = submitPurchaseOrder(purchaseOrderId);
+  if (!po) {
+    return res.status(400).json({ error: 'Unable to submit purchase order' });
   }
   res.json(po);
 });

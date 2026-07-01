@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
-import { createPurchaseOrder, getPurchaseOrderById, updatePurchaseOrder } from '../repositories/purchaseOrderRepository';
+import { createPurchaseOrder, getPurchaseOrderById, updatePurchaseOrder, setPurchaseOrderStatus } from '../repositories/purchaseOrderRepository';
 import { replaceLineItems, getLineItems } from '../repositories/lineItemRepository';
 import { PurchaseOrder, PurchaseOrderStatus } from '../models/purchaseOrder';
 import { PurchaseOrderLineItem } from '../models/purchaseOrderLineItem';
+import { createSupplierNotification } from './notificationService';
 
 export type PurchaseOrderWithLineItems = PurchaseOrder & {
   lineItems: PurchaseOrderLineItem[];
@@ -79,6 +80,26 @@ export const getDraftPurchaseOrder = (purchaseOrderId: string): PurchaseOrderWit
   }
   return {
     ...po,
+    lineItems: getLineItems(purchaseOrderId),
+  };
+};
+
+export const submitPurchaseOrder = (purchaseOrderId: string) => {
+  const po = getPurchaseOrderById(purchaseOrderId);
+  if (!po || po.status !== 'Draft') {
+    return undefined;
+  }
+
+  const now = new Date().toISOString();
+  const updated = setPurchaseOrderStatus(purchaseOrderId, 'Submitted', now);
+  if (!updated) {
+    return undefined;
+  }
+
+  createSupplierNotification(po.supplierId, po.id);
+
+  return {
+    ...updated,
     lineItems: getLineItems(purchaseOrderId),
   };
 };

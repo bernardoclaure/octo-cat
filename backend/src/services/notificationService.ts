@@ -5,7 +5,7 @@ const insertNotification = db.prepare(`
 INSERT INTO notifications (
   id, supplierId, purchaseOrderId, type, status, sentAt, errorMessage, createdAt, updatedAt
 ) VALUES (
-  @id, @supplierId, @purchaseOrderId, @type, @status, @sentAt, @errorMessage, @createdAt, @updatedAt
+  ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 `);
 

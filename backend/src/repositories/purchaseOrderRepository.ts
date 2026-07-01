@@ -86,6 +86,19 @@ export const setPurchaseOrderStatus = (id: string, status: PurchaseOrderStatus, 
     fulfilledAt: status === 'Fulfilled' ? timestamp : po.fulfilledAt,
     cancelledAt: status === 'Cancelled' ? timestamp : po.cancelledAt,
   };
-  updatePo.run(updated);
+  updatePo.run(
+    normalize(updated.branchId),
+    normalize(updated.supplierId),
+    normalize(updated.buyerId),
+    normalize(updated.approverId),
+    normalize(updated.status),
+    normalize(updated.totalExpectedAmount),
+    normalize(updated.submittedAt),
+    normalize(updated.approvedAt),
+    normalize(updated.fulfilledAt),
+    normalize(updated.cancelledAt),
+    normalize(updated.updatedAt),
+    normalize(updated.id),
+  );
   return updated;
 };
