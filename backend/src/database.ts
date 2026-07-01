@@ -1,7 +1,65 @@
-import Database from 'better-sqlite3';
-import { DB_PATH } from './config';
+import { mkdirSync } from 'fs';
+import { dirname } from 'path';
+import { getDbPath } from './config';
 
-const db = new Database(DB_PATH);
+const { DatabaseSync } = require('node:sqlite') as {
+  DatabaseSync: new (path: string) => {
+    exec(sql: string): void;
+    prepare(sql: string): {
+      run(params?: unknown): unknown;
+      get(params?: unknown): unknown;
+      all(params?: unknown): unknown;
+    };
+  };
+};
+
+type Statement = {
+  run(params?: unknown): unknown;
+  get(params?: unknown): unknown;
+  all(params?: unknown): unknown;
+};
+
+type NativeDatabase = {
+  exec(sql: string): void;
+  prepare(sql: string): Statement;
+};
+
+class SqliteDatabase {
+  private nativeDb: NativeDatabase;
+
+  constructor(path: string) {
+    this.nativeDb = new DatabaseSync(path);
+  }
+
+  exec(sql: string) {
+    this.nativeDb.exec(sql);
+  }
+
+  prepare(sql: string): Statement {
+    return this.nativeDb.prepare(sql);
+  }
+
+  transaction<TArgs extends unknown[], TResult>(fn: (...args: TArgs) => TResult) {
+    return (...args: TArgs): TResult => {
+      this.nativeDb.exec('BEGIN');
+      try {
+        const result = fn(...args);
+        this.nativeDb.exec('COMMIT');
+        return result;
+      } catch (error) {
+        this.nativeDb.exec('ROLLBACK');
+        throw error;
+      }
+    };
+  }
+}
+
+const dbPath = getDbPath();
+if (dbPath !== ':memory:' && dbPath !== '') {
+  mkdirSync(dirname(dbPath), { recursive: true });
+}
+
+const db = new SqliteDatabase(dbPath);
 
 // Initialize schema if it does not exist
 const ddl = `

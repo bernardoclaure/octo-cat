@@ -1,8 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createPurchaseOrder, getPurchaseOrderById, updatePurchaseOrder } from '../repositories/purchaseOrderRepository';
-import { replaceLineItems } from '../repositories/lineItemRepository';
+import { replaceLineItems, getLineItems } from '../repositories/lineItemRepository';
 import { PurchaseOrder, PurchaseOrderStatus } from '../models/purchaseOrder';
 import { PurchaseOrderLineItem } from '../models/purchaseOrderLineItem';
+
+export type PurchaseOrderWithLineItems = PurchaseOrder & {
+  lineItems: PurchaseOrderLineItem[];
+};
 
 export const createDraftPurchaseOrder = (
   payload: Omit<PurchaseOrder, 'status' | 'createdAt' | 'updatedAt'>,
@@ -31,7 +35,7 @@ export const createDraftPurchaseOrder = (
     })),
   );
 
-  return po;
+  return { ...po, lineItems: getLineItems(po.id) };
 };
 
 export const updateDraftPurchaseOrder = (
@@ -65,5 +69,16 @@ export const updateDraftPurchaseOrder = (
     })),
   );
 
-  return updated;
+  return { ...updated, lineItems: getLineItems(poId) };
+};
+
+export const getDraftPurchaseOrder = (purchaseOrderId: string): PurchaseOrderWithLineItems | undefined => {
+  const po = getPurchaseOrderById(purchaseOrderId);
+  if (!po) {
+    return undefined;
+  }
+  return {
+    ...po,
+    lineItems: getLineItems(purchaseOrderId),
+  };
 };

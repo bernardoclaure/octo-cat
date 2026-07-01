@@ -6,36 +6,65 @@ INSERT INTO purchase_orders (
   id, branchId, supplierId, buyerId, approverId, status, totalExpectedAmount,
   submittedAt, approvedAt, fulfilledAt, cancelledAt, createdAt, updatedAt
 ) VALUES (
-  @id, @branchId, @supplierId, @buyerId, @approverId, @status, @totalExpectedAmount,
-  @submittedAt, @approvedAt, @fulfilledAt, @cancelledAt, @createdAt, @updatedAt
+  ?, ?, ?, ?, ?, ?, ?,
+  ?, ?, ?, ?, ?, ?
 )
 `);
 
 const updatePo = db.prepare(`
 UPDATE purchase_orders SET
-  branchId = @branchId,
-  supplierId = @supplierId,
-  buyerId = @buyerId,
-  approverId = @approverId,
-  status = @status,
-  totalExpectedAmount = @totalExpectedAmount,
-  submittedAt = @submittedAt,
-  approvedAt = @approvedAt,
-  fulfilledAt = @fulfilledAt,
-  cancelledAt = @cancelledAt,
-  updatedAt = @updatedAt
-WHERE id = @id
+  branchId = ?,
+  supplierId = ?,
+  buyerId = ?,
+  approverId = ?,
+  status = ?,
+  totalExpectedAmount = ?,
+  submittedAt = ?,
+  approvedAt = ?,
+  fulfilledAt = ?,
+  cancelledAt = ?,
+  updatedAt = ?
+WHERE id = ?
 `);
 
 const getByIdStmt = db.prepare(`SELECT * FROM purchase_orders WHERE id = ?`);
 
+const normalize = (value: unknown) => (value === undefined ? null : value);
+
 export const createPurchaseOrder = (po: PurchaseOrder) => {
-  insertPo.run(po);
+  insertPo.run(
+    normalize(po.id),
+    normalize(po.branchId),
+    normalize(po.supplierId),
+    normalize(po.buyerId),
+    normalize(po.approverId),
+    normalize(po.status),
+    normalize(po.totalExpectedAmount),
+    normalize(po.submittedAt),
+    normalize(po.approvedAt),
+    normalize(po.fulfilledAt),
+    normalize(po.cancelledAt),
+    normalize(po.createdAt),
+    normalize(po.updatedAt),
+  );
   return po;
 };
 
 export const updatePurchaseOrder = (po: PurchaseOrder) => {
-  updatePo.run(po);
+  updatePo.run(
+    normalize(po.branchId),
+    normalize(po.supplierId),
+    normalize(po.buyerId),
+    normalize(po.approverId),
+    normalize(po.status),
+    normalize(po.totalExpectedAmount),
+    normalize(po.submittedAt),
+    normalize(po.approvedAt),
+    normalize(po.fulfilledAt),
+    normalize(po.cancelledAt),
+    normalize(po.updatedAt),
+    normalize(po.id),
+  );
   return po;
 };
 

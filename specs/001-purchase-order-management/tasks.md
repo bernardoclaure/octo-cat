@@ -54,18 +54,18 @@ description: "Task list for Purchase Order Management feature implementation"
 
 ### Tests for User Story 1
 
-- [ ] T015 [P] [US1] Create contract test for `POST /api/purchase-orders` and `PUT /api/purchase-orders/:purchaseOrderId` in `backend/tests/contract/test_purchase_order_draft_flow.spec.ts`
-- [ ] T016 [P] [US1] Create integration test for Draft PO creation and update in `backend/tests/integration/test_purchase_order_draft_flow.spec.ts`
+- [X] T015 [P] [US1] Create contract test for `POST /api/purchase-orders` and `PUT /api/purchase-orders/:purchaseOrderId` in `backend/tests/contract/test_purchase_order_draft_flow.spec.ts`
+- [X] T016 [P] [US1] Create integration test for Draft PO creation and update in `backend/tests/integration/test_purchase_order_draft_flow.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T017 [P] [US1] Implement `createDraftPurchaseOrder` and `updateDraftPurchaseOrder` in `backend/src/services/purchaseOrderService.ts`
-- [ ] T018 [US1] Add repository support for Draft PO persistence in `backend/src/repositories/purchaseOrderRepository.ts` and `backend/src/repositories/lineItemRepository.ts`
-- [ ] T019 [US1] Implement backend Draft PO endpoints in `backend/src/routes/purchaseOrderRoutes.ts`
-- [ ] T020 [US1] Create `PurchaseOrderForm` page in `frontend/src/pages/purchase-orders/PurchaseOrderForm.tsx`
-- [ ] T021 [US1] Implement line item editing UI in `frontend/src/components/purchase-orders/PurchaseOrderLineItemEditor.tsx`
-- [ ] T022 [US1] Add Draft PO state management and save actions in `frontend/src/context/purchaseOrderContext.tsx`
-- [ ] T023 [US1] Add frontend validation and API integration in `frontend/src/api/purchaseOrderApi.ts`
+- [X] T017 [P] [US1] Implement `createDraftPurchaseOrder` and `updateDraftPurchaseOrder` in `backend/src/services/purchaseOrderService.ts`
+- [X] T018 [US1] Add repository support for Draft PO persistence in `backend/src/repositories/purchaseOrderRepository.ts` and `backend/src/repositories/lineItemRepository.ts`
+- [X] T019 [US1] Implement backend Draft PO endpoints in `backend/src/routes/purchaseOrderRoutes.ts`
+- [X] T020 [US1] Create `PurchaseOrderForm` page in `frontend/src/pages/purchase-orders/PurchaseOrderForm.tsx`
+- [X] T021 [US1] Implement line item editing UI in `frontend/src/components/purchase-orders/PurchaseOrderLineItemEditor.tsx`
+- [X] T022 [US1] Add Draft PO state management and save actions in `frontend/src/context/purchaseOrderContext.tsx`
+- [X] T023 [US1] Add frontend validation and API integration in `frontend/src/api/purchaseOrderApi.ts`
 
 **Checkpoint**: User Story 1 should be fully functional and testable independently
 

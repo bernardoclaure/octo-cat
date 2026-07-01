@@ -23,6 +23,16 @@ export const createSupplierNotification = (supplierId: string, purchaseOrderId: 
     updatedAt: now,
   };
 
-  insertNotification.run(notification);
+  insertNotification.run(
+    notification.id,
+    notification.supplierId,
+    notification.purchaseOrderId,
+    notification.type,
+    notification.status,
+    notification.sentAt ?? null,
+    notification.errorMessage ?? null,
+    notification.createdAt,
+    notification.updatedAt,
+  );
   return notification;
 };
