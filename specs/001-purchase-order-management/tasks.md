@@ -144,12 +144,12 @@ description: "Task list for Purchase Order Management feature implementation"
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T045 [P] Update OpenAPI documentation and backend schemas in `backend/src/schemas/purchaseOrderSchemas.ts`
-- [ ] T046 [P] Add frontend documentation and help copy in `frontend/src/pages/purchase-orders/Readme.md`
-- [ ] T047 [P] Add Playwright end-to-end smoke test for the full PO lifecycle in `frontend/tests/e2e/purchaseOrderLifecycle.spec.ts`
-- [ ] T048 [P] Run quickstart validation and update `specs/001-purchase-order-management/quickstart.md`
-- [ ] T049 [P] Perform code cleanup and type-safety fixes in `backend/src/` and `frontend/src/`
-- [ ] T050 [P] Add test coverage reports and CI validation commands for backend and frontend
+- [X] T045 [P] Update OpenAPI documentation and backend schemas in `backend/src/schemas/purchaseOrderSchemas.ts`
+- [X] T046 [P] Add frontend documentation and help copy in `frontend/src/pages/purchase-orders/Readme.md`
+- [X] T047 [P] Add Playwright end-to-end smoke test for the full PO lifecycle in `frontend/tests/e2e/purchaseOrderLifecycle.spec.ts`
+- [X] T048 [P] Run quickstart validation and update `specs/001-purchase-order-management/quickstart.md`
+- [X] T049 [P] Perform code cleanup and type-safety fixes in `backend/src/` and `frontend/src/`
+- [X] T050 [P] Add test coverage reports and CI validation commands for backend and frontend
 
 ---
 

@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:5173';
 
-test.describe('Draft purchase order workflow', () => {
-  test('creates a draft purchase order and displays total amount', async ({ page }) => {
+test.describe('Purchase order lifecycle', () => {
+  test('creates, submits, cancels, and shows a purchase order detail view', async ({ page }) => {
     await page.goto(`${BASE_URL}/purchase-orders/new`);
 
     await page.fill('input[aria-label="Branch ID"]', 'branch-123');
@@ -19,5 +19,11 @@ test.describe('Draft purchase order workflow', () => {
 
     await expect(page.locator('text=Purchase order created successfully')).toBeVisible();
     await expect(page.locator('text=Total expected amount: $100.00')).toBeVisible();
+
+    const purchaseOrderId = page.url().split('/').pop();
+    await page.goto(`${BASE_URL}/purchase-orders/${purchaseOrderId}`);
+    await page.click('button:has-text("Cancel Purchase Order")');
+
+    await expect(page.locator('text=Cancelled')).toBeVisible();
   });
 });

@@ -7,10 +7,50 @@
   "paths": {
     "/api/purchase-orders": {
       "post": {
-        "summary": "Create a purchase order",
+        "summary": "Create a draft purchase order",
         "responses": {
           "201": {
             "description": "Purchase order created"
+          }
+        }
+      }
+    },
+    "/api/purchase-orders/{purchaseOrderId}/submit": {
+      "post": {
+        "summary": "Submit a draft purchase order",
+        "responses": {
+          "200": {
+            "description": "Purchase order submitted"
+          }
+        }
+      }
+    },
+    "/api/purchase-orders/{purchaseOrderId}/approve": {
+      "post": {
+        "summary": "Approve a submitted purchase order",
+        "responses": {
+          "200": {
+            "description": "Purchase order approved"
+          }
+        }
+      }
+    },
+    "/api/purchase-orders/{purchaseOrderId}/fulfill": {
+      "post": {
+        "summary": "Fulfill an approved purchase order",
+        "responses": {
+          "200": {
+            "description": "Purchase order fulfilled"
+          }
+        }
+      }
+    },
+    "/api/purchase-orders/{purchaseOrderId}/cancel": {
+      "post": {
+        "summary": "Cancel a purchase order",
+        "responses": {
+          "200": {
+            "description": "Purchase order cancelled"
           }
         }
       }

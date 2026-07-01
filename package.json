@@ -6,9 +6,9 @@
     "frontend"
   ],
   "scripts": {
-    "dev:backend": "yarn workspace backend dev",
-    "dev:frontend": "yarn workspace frontend dev",
-    "test": "yarn workspaces run test",
-    "build": "yarn workspaces run build"
+    "dev:backend": "npm --workspace backend run dev",
+    "dev:frontend": "npm --workspace frontend run dev",
+    "test": "npm run test --workspaces",
+    "build": "npm run build --workspaces"
   }
 }

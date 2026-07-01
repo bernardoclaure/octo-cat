@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { usePurchaseOrder } from '../../context/purchaseOrderContext';
 import { PurchaseOrderPayload, PurchaseOrderResponse, PurchaseOrderLineItemPayload } from '../../api/purchaseOrderApi';
 import Button from '../../components/ui/Button';
@@ -16,6 +16,7 @@ const emptyLineItem = (): PurchaseOrderLineItemPayload => ({
 export default function PurchaseOrderForm() {
   const { purchaseOrderId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { createPurchaseOrder, updatePurchaseOrder, getPurchaseOrder, loading } = usePurchaseOrder();
   const [supplierId, setSupplierId] = useState('');
   const [branchId, setBranchId] = useState('');
@@ -24,10 +25,19 @@ export default function PurchaseOrderForm() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  const initialPurchaseOrder = (location.state as { purchaseOrder?: PurchaseOrderResponse } | undefined)?.purchaseOrder;
   const isEditMode = Boolean(purchaseOrderId);
 
   useEffect(() => {
     if (!purchaseOrderId) {
+      return;
+    }
+
+    if (initialPurchaseOrder && initialPurchaseOrder.id === purchaseOrderId) {
+      setSupplierId(initialPurchaseOrder.supplierId);
+      setBranchId(initialPurchaseOrder.branchId);
+      setBuyerId(initialPurchaseOrder.buyerId);
+      setLineItems(initialPurchaseOrder.lineItems.length > 0 ? initialPurchaseOrder.lineItems : [emptyLineItem()]);
       return;
     }
 
@@ -41,7 +51,7 @@ export default function PurchaseOrderForm() {
       .catch(() => {
         setError('Unable to load purchase order for editing.');
       });
-  }, [getPurchaseOrder, purchaseOrderId]);
+  }, [getPurchaseOrder, initialPurchaseOrder, purchaseOrderId]);
 
   const totalAmount = useMemo(
     () => lineItems.reduce((sum, item) => sum + item.quantity * item.expectedUnitPrice, 0),
@@ -106,7 +116,7 @@ export default function PurchaseOrderForm() {
 
       setSuccessMessage(`Purchase order ${isEditMode ? 'updated' : 'created'} successfully with ID ${po.id}`);
       if (!isEditMode) {
-        navigate(`/purchase-orders/${po.id}/edit`);
+        navigate(`/purchase-orders/${po.id}`, { state: { purchaseOrder: po } });
       }
     } catch (err) {
       setError('Unable to save purchase order. Please try again.');

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { PurchaseOrderResponse } from '../../api/purchaseOrderApi';
 import { usePurchaseOrder } from '../../context/purchaseOrderContext';
 import Button from '../../components/ui/Button';
@@ -8,8 +8,10 @@ import StatusBadge from '../../components/ui/StatusBadge';
 export default function PurchaseOrderDetail() {
   const { purchaseOrderId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { getPurchaseOrder, cancelPurchaseOrder, loading } = usePurchaseOrder();
-  const [purchaseOrder, setPurchaseOrder] = useState<PurchaseOrderResponse | null>(null);
+  const initialPurchaseOrder = (location.state as { purchaseOrder?: PurchaseOrderResponse } | undefined)?.purchaseOrder;
+  const [purchaseOrder, setPurchaseOrder] = useState<PurchaseOrderResponse | null>(initialPurchaseOrder ?? null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -17,10 +19,15 @@ export default function PurchaseOrderDetail() {
       return;
     }
 
+    if (initialPurchaseOrder && initialPurchaseOrder.id === purchaseOrderId) {
+      setPurchaseOrder(initialPurchaseOrder);
+      return;
+    }
+
     getPurchaseOrder(purchaseOrderId)
       .then(setPurchaseOrder)
       .catch(() => setError('Unable to load purchase order details.'));
-  }, [getPurchaseOrder, purchaseOrderId]);
+  }, [getPurchaseOrder, initialPurchaseOrder, purchaseOrderId]);
 
   const handleCancel = async () => {
     if (!purchaseOrderId) {
@@ -50,6 +57,14 @@ export default function PurchaseOrderDetail() {
         <strong>Status:</strong> <StatusBadge status={purchaseOrder.status} />
       </p>
       <p>
+        <strong>Workflow note:</strong>{' '}
+        {purchaseOrder.status === 'Cancelled'
+          ? 'This purchase order has been cancelled and cannot advance.'
+          : purchaseOrder.status === 'Fulfilled'
+            ? 'This purchase order has been fulfilled.'
+            : 'This purchase order is still active in the workflow.'}
+      </p>
+      <p>
         <strong>Total:</strong> ${purchaseOrder.totalExpectedAmount.toFixed(2)}
       </p>
       <p>
@@ -64,7 +79,7 @@ export default function PurchaseOrderDetail() {
       {['Draft', 'Submitted', 'Approved'].includes(purchaseOrder.status) && (
         <Button onClick={handleCancel}>{loading ? 'Cancelling...' : 'Cancel Purchase Order'}</Button>
       )}
-      <Button onClick={() => navigate(`/purchase-orders/${purchaseOrder.id}/edit`)}>Edit Draft</Button>
+      <Button onClick={() => navigate(`/purchase-orders/${purchaseOrder.id}/edit`, { state: { purchaseOrder } })}>Edit Draft</Button>
     </div>
   );
 }

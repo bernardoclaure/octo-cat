@@ -9,7 +9,7 @@ function Home() {
       </p>
       <Link to="/purchase-orders/new">Create a new Draft Purchase Order</Link>
       <div>
-        <Link to="/purchase-orders/demo">View Purchase Order Details</Link>
+        Create a purchase order and you will be taken to its detail view automatically after saving.
       </div>
     </div>
   );

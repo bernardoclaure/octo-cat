@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import {
   cancelPurchaseOrder,
   createPurchaseOrder,
@@ -21,41 +21,41 @@ const PurchaseOrderContext = createContext<PurchaseOrderContextValue | undefined
 export const PurchaseOrderProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(false);
 
-  const create = async (payload: PurchaseOrderPayload) => {
+  const create = useCallback(async (payload: PurchaseOrderPayload) => {
     setLoading(true);
     try {
       return await createPurchaseOrder(payload);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const update = async (purchaseOrderId: string, payload: PurchaseOrderPayload) => {
+  const update = useCallback(async (purchaseOrderId: string, payload: PurchaseOrderPayload) => {
     setLoading(true);
     try {
       return await updatePurchaseOrder(purchaseOrderId, payload);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const get = async (purchaseOrderId: string) => {
+  const get = useCallback(async (purchaseOrderId: string) => {
     setLoading(true);
     try {
       return await getPurchaseOrder(purchaseOrderId);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const cancel = async (purchaseOrderId: string) => {
+  const cancel = useCallback(async (purchaseOrderId: string) => {
     setLoading(true);
     try {
       return await cancelPurchaseOrder(purchaseOrderId);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return (
     <PurchaseOrderContext.Provider value={{ createPurchaseOrder: create, updatePurchaseOrder: update, getPurchaseOrder: get, cancelPurchaseOrder: cancel, loading }}>

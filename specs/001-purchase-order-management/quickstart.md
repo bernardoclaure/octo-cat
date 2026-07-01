@@ -3,86 +3,76 @@
 ## Prerequisites
 
 - Node.js 20+ installed
-- Yarn or npm available
-- A terminal in `repos/copInmersive`
+- npm available
+- A terminal in the repository root
 
 ## Setup
 
 1. Install dependencies:
 
 ```bash
-cd c:\Users\Bernardo Claure\repos\copInmersive
+cd c:\repos\copInmersive
 npm install
 ```
 
-2. Initialize the SQLite database schema for the backend.
-
-```bash
-npm run db:init
-```
-
-3. Start the backend API and frontend app.
+2. Start the backend API:
 
 ```bash
 npm run dev:backend
+```
+
+3. In a second terminal, start the frontend app:
+
+```bash
 npm run dev:frontend
 ```
 
 ## Validation Scenarios
 
-### Scenario 1: Create a Draft PO
+### Scenario 1: Create a draft PO
 
-1. As a branch buyer, create a new purchase order with one supplier.
-2. Add one or more line items with quantity and expected price.
-3. Save the PO.
-
-Expected result:
-- PO is stored with status `Draft`.
-- Line items are persisted and retrievable.
-
-### Scenario 2: Submit a PO and notify the supplier
-
-1. Submit the Draft PO.
-2. Confirm the PO status changes to `Submitted`.
-3. Verify a supplier notification record exists.
+1. Open the app at http://localhost:5173.
+2. Create a new draft purchase order with one line item.
+3. Save it.
 
 Expected result:
-- PO status is `Submitted`.
-- Notification state is `Pending` or `Sent`.
+- The order is created with status Draft.
+- The total expected amount is shown.
 
-### Scenario 3: Approve a high-value PO
+### Scenario 2: Submit and cancel a PO
 
-1. Create or submit a PO with total expected amount above $10,000.
-2. Use the approver role to approve the PO.
-
-Expected result:
-- PO transitions from `Submitted` to `Approved`.
-- Fulfillment is blocked until approval for high-value PO.
-
-### Scenario 4: Cancel a PO
-
-1. Cancel a PO in `Draft`, `Submitted`, or `Approved` status.
+1. Open the detail view for the created purchase order.
+2. Submit it from the UI or API.
+3. Cancel it.
 
 Expected result:
-- PO status changes to `Cancelled`.
-- Further workflow transitions are rejected.
+- The status moves to Submitted and then Cancelled.
+
+### Scenario 3: Approve and fulfill a high-value PO
+
+1. Create or submit a PO with a total above $10,000.
+2. Call the approval endpoint.
+3. Call the fulfillment endpoint.
+
+Expected result:
+- The status becomes Approved and then Fulfilled.
 
 ## Test Commands
 
-- Run unit tests:
+Run backend tests:
 
 ```bash
-npm test
+npm --workspace backend test
 ```
 
-- Run integration tests:
+Build the frontend:
 
 ```bash
-npm run test:integration
+npm --workspace frontend run build
 ```
 
-- Run E2E tests:
+Run the Playwright smoke test:
 
 ```bash
-npm run test:e2e
+npx playwright test frontend/tests/e2e/purchaseOrderLifecycle.spec.ts
 ```
