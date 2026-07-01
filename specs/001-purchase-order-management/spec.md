@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: User description: "Create a Purchase Order management system. Buyers at branches can create purchase orders to suppliers for products. Each PO contains multiple line items with quantities and expected prices. Track PO status (Draft, Submitted, Approved, Fulfilled, Cancelled). Suppliers receive notifications when POs are submitted. Include approval workflow for POs over $10,000.)"
+**Input**: User description: "Create a Purchase Order management system. Buyers at branches can create purchase orders to suppliers for products. Each PO contains multiple line items with quantities and expected prices. Track PO status (Draft, Submitted, Approved, Partially Fulfilled, Fulfilled, Cancelled). Suppliers receive notifications when POs are submitted. Include approval workflow for POs over $10,000. Support partial fulfillment where line items can be fulfilled across multiple shipments, track fulfillment history per line item, and expose fulfillment history through a retrieval endpoint."
 
 ## Clarifications
 
@@ -48,16 +48,19 @@ A branch buyer can submit a Draft PO to a supplier, triggering a supplier notifi
 
 ### User Story 3 - Approval and fulfillment workflow for higher-value orders (Priority: P2)
 
-A submitted PO above $10,000 requires approval before it can be fulfilled. Lower-value POs may move directly to fulfillment after submission.
+A submitted PO above $10,000 requires approval before it can be fulfilled. Approved POs may then be fulfilled incrementally across multiple shipments. The PO remains in Partially Fulfilled status until every line item has completed, and the system records a fulfillment history for each line item.
 
-**Why this priority**: Approval controls protect the business for large commitments and enforce the required workflow.
+**Why this priority**: Approval controls protect the business for large commitments and ensure fulfillment is visible and auditable over time.
 
-**Independent Test**: Submit a PO over $10,000 and verify that it cannot move to Fulfilled until Approved; verify the approval transition is recorded.
+**Independent Test**: Submit a PO over $10,000, approve it, record partial fulfillment for one line item, and verify that the PO remains Partially Fulfilled until the final shipment completes the order.
 
 **Acceptance Scenarios**:
 
 1. **Given** a submitted PO has a total expected value greater than $10,000, **When** an approver reviews it, **Then** the PO can move from Submitted to Approved.
 2. **Given** a submitted PO is over $10,000 and has not been approved, **When** fulfillment is attempted, **Then** the system prevents fulfillment and keeps the PO in Submitted status.
+3. **Given** an approved PO has outstanding quantity on one or more line items, **When** a shipment is recorded for part of the outstanding quantity, **Then** the system updates the line item fulfillment record and moves the PO to Partially Fulfilled.
+4. **Given** a PO is in Partially Fulfilled status, **When** the final outstanding quantity for all line items is recorded, **Then** the system moves the PO to Fulfilled.
+5. **Given** a PO has partial fulfillment activity, **When** fulfillment history is requested, **Then** the system returns the shipment history for each line item.
 
 ---
 
@@ -94,16 +97,20 @@ A buyer can cancel a PO while it is Draft, Submitted, or Approved. Cancelled POs
 - **FR-005**: System MUST allow buyers to submit Draft POs and change status to Submitted.
 - **FR-006**: System MUST notify the selected supplier when a PO is submitted.
 - **FR-007**: System MUST require approval for submitted POs with total expected value above $10,000 before they can be fulfilled.
-- **FR-008**: System MUST track PO status using the states Draft, Submitted, Approved, Fulfilled, and Cancelled.
+- **FR-008**: System MUST track PO status using the states Draft, Submitted, Approved, Partially Fulfilled, Fulfilled, and Cancelled.
 - **FR-009**: System MUST allow buyers to cancel POs while they are Draft, Submitted, or Approved.
-- **FR-010**: System MUST prevent fulfillment of POs that have not reached Approved status when approval is required or that are Cancelled.
+- **FR-010**: System MUST prevent fulfillment of POs that have not reached Approved status when approval is required, that are Cancelled, or that would exceed the outstanding quantity on a line item.
 - **FR-011**: System MUST preserve the PO lifecycle history so that status transitions can be audited.
 - **FR-012**: System MUST require high-value PO approvals to be performed by a distinct approver role separate from branch buyers.
+- **FR-013**: System MUST allow approved POs to be fulfilled incrementally across multiple shipments, with each shipment applying to one or more line items.
+- **FR-014**: System MUST track fulfillment history per line item, including the quantity fulfilled, shipment timestamp, and shipment reference.
+- **FR-015**: System MUST expose a retrieval capability for purchase order fulfillment history so that shipment activity can be reviewed for the PO and its line items.
 
 ### Key Entities *(include if feature involves data)*
 
 - **Purchase Order (PO)**: Represents a procurement request from a branch to a supplier, including supplier info, branch buyer, status, and totals.
 - **Line Item**: Represents a product request on a PO with quantity, expected unit price, and product reference.
+- **Fulfillment Event**: Represents a shipment or partial delivery applied to one or more line items, including quantity fulfilled and timestamp.
 - **Branch Buyer**: Represents the buyer role at a branch who creates and manages POs.
 - **Supplier**: Represents the vendor receiving the PO and notifications when a PO is submitted.
 - **Approver**: Represents the role authorized to approve higher-value POs, distinct from branch buyers.
@@ -115,10 +122,12 @@ A buyer can cancel a PO while it is Draft, Submitted, or Approved. Cancelled POs
 
 - **SC-001**: A branch buyer can create a PO with at least one line item and save it as Draft.
 - **SC-002**: A submitted PO moves to Submitted status and a supplier notification is recorded within one minute of submission.
-- **SC-003**: Submitted POs with total expected value above $10,000 require approval before they can transition to Fulfilled.
-- **SC-004**: The system supports the defined PO status lifecycle: Draft → Submitted → Approved → Fulfilled, plus Cancelled.
+- **SC-003**: Submitted POs with total expected value above $10,000 require approval before they can transition to Fulfilled, and approved POs may be fulfilled incrementally.
+- **SC-004**: The system supports the defined PO status lifecycle: Draft → Submitted → Approved → Partially Fulfilled → Fulfilled, plus Cancelled.
 - **SC-005**: A cancelled PO cannot be fulfilled and remains in Cancelled status.
-- **SC-006**: Acceptance tests cover both normal and edge case transitions for PO creation, submission, approval, fulfillment, and cancellation.
+- **SC-006**: Acceptance tests cover both normal and edge case transitions for PO creation, submission, approval, partial fulfillment, fulfillment, and cancellation.
+- **SC-007**: A PO moves to Partially Fulfilled while any line item still has outstanding quantity and reaches Fulfilled once all line items are complete.
+- **SC-008**: A fulfillment history retrieval request returns the shipment timeline for the PO and each line item.
 
 ## Assumptions
 
@@ -128,3 +137,4 @@ A buyer can cancel a PO while it is Draft, Submitted, or Approved. Cancelled POs
 - Supplier notification can be modeled as a recorded delivery event; actual delivery mechanics may be implemented separately.
 - The approval workflow is based on expected total price, not actual invoiced cost.
 - Change requests, purchase order revisions, and supplier quote negotiation are out of scope for this initial feature.
+- Fulfillment is recorded as shipment events against existing line-item quantities and does not require integration with external logistics systems for this feature.

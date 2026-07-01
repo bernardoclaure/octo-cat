@@ -185,6 +185,10 @@ description: "Task list for Purchase Order Management feature implementation"
 - Different user stories can be worked on concurrently after foundational phase completion.
 - UI component and API client tasks are parallelizable across frontend files for different user stories.
 
+## Partial Fulfillment Follow-Up
+
+See [tasks.partial-fulfillment.md](tasks.partial-fulfillment.md) for the additional implementation tasks for the new partial-fulfillment feature.
+
 ## Suggested MVP Scope
 
 - Complete Phase 1 and Phase 2

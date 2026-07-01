@@ -8,18 +8,18 @@
 
 ## Summary
 
-Implement a TypeScript-based Purchase Order Management feature with an Express.js REST API backend, SQLite persistence using a repository pattern, and a React frontend. The solution will manage branch buyer-created POs with line items, supplier notifications on submission, and a distinct approver workflow for orders over $10,000. OpenAPI/Swagger will document the API, and the design will emphasize minimal dependencies, library-first modules, and real SQLite-backed integration testing.
+Implement a TypeScript-based Purchase Order Management feature with an Express.js REST API backend, SQLite persistence using a repository pattern, and a React frontend. The solution will manage branch buyer-created POs with line items, supplier notifications on submission, a distinct approver workflow for orders over $10,000, and incremental fulfillment across multiple shipments. The design will add line-item fulfillment history, a Partially Fulfilled PO state, and a retrieval endpoint for fulfillment history while preserving the existing draft, submit, approve, and cancel behavior.
 
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x on Node.js
 
 **Primary Dependencies**:
-- Backend: `express`, `sqlite3` or `better-sqlite3`, `nodemailer` (stub notifications), `swagger-ui-express`
-- Frontend: `react`, `react-dom`, `react-router-dom`, `axios` or native `fetch`
-- Testing: `vitest`, `@playwright/test`
+- Backend: `express`, `uuid`, `swagger-ui-express`, and the existing SQLite-backed repository layer
+- Frontend: `react`, `react-dom`, `react-router-dom`, and native `fetch`
+- Testing: `vitest`, `supertest`, and `@playwright/test`
 
-**Storage**: SQLite database with a repository layer for data access and transaction-friendly PO lifecycle operations.
+**Storage**: SQLite database with a repository layer for data access plus a fulfillment-event table to maintain shipment history per line item and support status transitions such as Partially Fulfilled and Fulfilled.
 
 **Testing**: Vitest for unit and service-level tests; integration tests against SQLite; Playwright for E2E validation of frontend and backend flows.
 
@@ -29,7 +29,7 @@ Implement a TypeScript-based Purchase Order Management feature with an Express.j
 
 **Performance Goals**: Fast interactive workflow performance for buyers and approvers; backend API request latency should be low (sub-200ms for typical PO operations); correctness prioritized over throughput.
 
-**Constraints**: Keep dependencies minimal. Avoid heavy ORMs or frameworks beyond the requested Express/React stack. Use library-first modules and explicit repository/service separation. Support approval workflow, supplier notifications, and PO lifecycle transitions cleanly.
+**Constraints**: Keep dependencies minimal. Avoid heavy ORMs or frameworks beyond the requested Express/React stack. Use library-first modules and explicit repository/service separation. Support approval workflow, supplier notifications, and PO lifecycle transitions cleanly, while keeping partial fulfillment event history auditable without external logistics integration.
 
 **Scale/Scope**: Single feature slice for a supply chain procurement workflow supporting branch buyers, suppliers, and approvers with moderate order volume.
 
@@ -90,7 +90,4 @@ frontend/
 
 ## Complexity Tracking
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| Repository pattern | Required clean separation between SQLite persistence and business logic | Direct DB access would mix SQL with workflow rules and violate library-first discipline |
-| Distinct approver role | Required for high-value PO authorization and audit separation | Allowing branch buyers to approve would weaken business controls and complicate auditability |
+No constitution violations were identified. The planned work will add a fulfillment-history persistence layer and a new REST endpoint, but this remains consistent with the repository/service architecture and the existing test-driven workflow.

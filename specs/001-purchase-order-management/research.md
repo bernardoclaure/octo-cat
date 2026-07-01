@@ -6,11 +6,11 @@ Implement Purchase Order Management using a TypeScript-based web application wit
 - Express.js for the backend REST API
 - SQLite for persistence and real integration testing
 - Repository pattern for data access
-- Service layer for business logic, approval workflow, and notifications
+- Service layer for business logic, approval workflow, notifications, and partial-fulfillment transitions
 - React + TypeScript for the frontend UI
 - OpenAPI/Swagger for API documentation
-- Nodemailer as a stubbed notification mechanism
-- Vitest for unit tests and Playwright for E2E tests
+- A fulfillment-event model to track shipment activity per line item
+- Vitest for tests and Playwright for E2E tests
 
 ## Rationale
 
@@ -24,6 +24,7 @@ This stack matches the requested architecture and supports the OctoCAT Supply Ch
 ## Clarifications Resolved
 
 - Approval for POs over $10,000 will be performed by a distinct approver role separate from branch buyers.
+- Partial fulfillment will be modeled as multiple fulfillment events that apply to one or more line items and will keep the PO in Partially Fulfilled status until the final outstanding quantity is completed.
 
 ## Alternatives Considered
 

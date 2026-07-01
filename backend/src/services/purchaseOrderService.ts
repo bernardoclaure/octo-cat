@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { createPurchaseOrder, getPurchaseOrderById, updatePurchaseOrder, setPurchaseOrderStatus } from '../repositories/purchaseOrderRepository';
-import { replaceLineItems, getLineItems } from '../repositories/lineItemRepository';
+import { replaceLineItems, getLineItems, updateLineItemFulfilledQuantity } from '../repositories/lineItemRepository';
+import { createFulfillmentEvent, getFulfillmentEventsByPurchaseOrderId } from '../repositories/fulfillmentEventRepository';
 import { PurchaseOrder, PurchaseOrderStatus } from '../models/purchaseOrder';
 import { PurchaseOrderLineItem } from '../models/purchaseOrderLineItem';
 import { createSupplierNotification } from './notificationService';
@@ -134,13 +135,75 @@ export const approveSubmittedPurchaseOrder = (purchaseOrderId: string, approverI
   };
 };
 
-export const fulfillApprovedPurchaseOrder = (purchaseOrderId: string) => {
-  const result = fulfillPurchaseOrderByRule(purchaseOrderId);
-  if (!result) {
+export const fulfillApprovedPurchaseOrder = (purchaseOrderId: string, fulfillments?: { lineItemId: string; quantity: number; shipmentReference?: string }[]) => {
+  const po = getPurchaseOrderById(purchaseOrderId);
+  if (!po || !['Approved', 'Partially Fulfilled'].includes(po.status)) {
     return undefined;
   }
+
+  const now = new Date().toISOString();
+  const lineItems = getLineItems(purchaseOrderId);
+  const normalizedFulfillments = fulfillments ?? lineItems.map((item) => ({ lineItemId: item.id, quantity: item.quantity }));
+
+  for (const fulfillment of normalizedFulfillments) {
+    const lineItem = lineItems.find((item) => item.id === fulfillment.lineItemId);
+    if (!lineItem) {
+      continue;
+    }
+
+    const currentFulfilledQuantity = lineItem.fulfilledQuantity ?? 0;
+    const nextFulfilledQuantity = currentFulfilledQuantity + fulfillment.quantity;
+    if (nextFulfilledQuantity > lineItem.quantity) {
+      return undefined;
+    }
+
+    updateLineItemFulfilledQuantity(lineItem.id, nextFulfilledQuantity, now);
+    createFulfillmentEvent({
+      id: uuidv4(),
+      purchaseOrderId,
+      lineItemId: lineItem.id,
+      quantity: fulfillment.quantity,
+      shipmentReference: fulfillment.shipmentReference ?? null,
+      fulfilledAt: now,
+      createdAt: now,
+      updatedAt: now,
+    });
+  }
+
+  const updatedLineItems = getLineItems(purchaseOrderId);
+  const fullyFulfilled = updatedLineItems.every((item) => (item.fulfilledQuantity ?? 0) >= item.quantity);
+  const partiallyFulfilled = updatedLineItems.some((item) => (item.fulfilledQuantity ?? 0) > 0 && (item.fulfilledQuantity ?? 0) < item.quantity);
+
+  const updatedPo = setPurchaseOrderStatus(
+    purchaseOrderId,
+    fullyFulfilled ? 'Fulfilled' : partiallyFulfilled ? 'Partially Fulfilled' : po.status,
+    now,
+  );
+  if (!updatedPo) {
+    return undefined;
+  }
+
   return {
-    ...result,
-    lineItems: getLineItems(purchaseOrderId),
+    ...updatedPo,
+    lineItems: updatedLineItems,
   };
+};
+
+export const getPurchaseOrderFulfillmentHistory = (purchaseOrderId: string) => {
+  const po = getPurchaseOrderById(purchaseOrderId);
+  if (!po) {
+    return undefined;
+  }
+
+  const events = getFulfillmentEventsByPurchaseOrderId(purchaseOrderId);
+  const lineItems = getLineItems(purchaseOrderId);
+
+  return lineItems.map((lineItem) => ({
+    lineItemId: lineItem.id,
+    productId: lineItem.productId,
+    description: lineItem.description,
+    fulfilledQuantity: lineItem.fulfilledQuantity ?? 0,
+    quantity: lineItem.quantity,
+    events: events.filter((event) => event.lineItemId === lineItem.id),
+  }));
 };

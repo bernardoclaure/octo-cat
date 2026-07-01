@@ -12,13 +12,37 @@ export type PurchaseOrderPayload = {
   lineItems: PurchaseOrderLineItemPayload[];
 };
 
+export type FulfillmentEventResponse = {
+  id: string;
+  quantity: number;
+  shipmentReference?: string | null;
+  fulfilledAt: string;
+};
+
+export type PurchaseOrderLineItemResponse = PurchaseOrderLineItemPayload & {
+  id: string;
+  fulfilledQuantity?: number;
+  expectedTotalPrice: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type PurchaseOrderResponse = PurchaseOrderPayload & {
   id: string;
   status: string;
   totalExpectedAmount: number;
   createdAt: string;
   updatedAt: string;
-  lineItems: PurchaseOrderLineItemPayload[];
+  lineItems: PurchaseOrderLineItemResponse[];
+};
+
+export type FulfillmentHistoryEntry = {
+  lineItemId: string;
+  productId: string;
+  description: string;
+  fulfilledQuantity: number;
+  quantity: number;
+  events: FulfillmentEventResponse[];
 };
 
 export const createPurchaseOrder = async (payload: PurchaseOrderPayload): Promise<PurchaseOrderResponse> => {
@@ -69,6 +93,33 @@ export const cancelPurchaseOrder = async (purchaseOrderId: string): Promise<Purc
 
   if (!response.ok) {
     throw new Error(`Cancel purchase order failed: ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export const fulfillPurchaseOrder = async (
+  purchaseOrderId: string,
+  lineItemFulfillments: { lineItemId: string; quantity: number; shipmentReference?: string }[],
+): Promise<PurchaseOrderResponse> => {
+  const response = await fetch(`/api/purchase-orders/${purchaseOrderId}/fulfill`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ lineItemFulfillments }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Fulfill purchase order failed: ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export const getPurchaseOrderFulfillmentHistory = async (purchaseOrderId: string): Promise<FulfillmentHistoryEntry[]> => {
+  const response = await fetch(`/api/purchase-orders/${purchaseOrderId}/fulfillment-history`);
+
+  if (!response.ok) {
+    throw new Error(`Fetch fulfillment history failed: ${response.status}`);
   }
 
   return response.json();

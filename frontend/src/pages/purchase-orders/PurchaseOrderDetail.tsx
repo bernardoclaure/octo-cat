@@ -9,9 +9,10 @@ export default function PurchaseOrderDetail() {
   const { purchaseOrderId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { getPurchaseOrder, cancelPurchaseOrder, loading } = usePurchaseOrder();
+  const { getPurchaseOrder, cancelPurchaseOrder, fulfillPurchaseOrder, getPurchaseOrderFulfillmentHistory, loading } = usePurchaseOrder();
   const initialPurchaseOrder = (location.state as { purchaseOrder?: PurchaseOrderResponse } | undefined)?.purchaseOrder;
   const [purchaseOrder, setPurchaseOrder] = useState<PurchaseOrderResponse | null>(initialPurchaseOrder ?? null);
+  const [history, setHistory] = useState<Array<{ lineItemId: string; productId: string; description: string; fulfilledQuantity: number; quantity: number; events: Array<{ id: string; quantity: number; shipmentReference?: string | null; fulfilledAt: string }> }>>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -25,9 +26,13 @@ export default function PurchaseOrderDetail() {
     }
 
     getPurchaseOrder(purchaseOrderId)
-      .then(setPurchaseOrder)
+      .then((po) => {
+        setPurchaseOrder(po);
+        return getPurchaseOrderFulfillmentHistory(purchaseOrderId);
+      })
+      .then(setHistory)
       .catch(() => setError('Unable to load purchase order details.'));
-  }, [getPurchaseOrder, initialPurchaseOrder, purchaseOrderId]);
+  }, [getPurchaseOrder, getPurchaseOrderFulfillmentHistory, initialPurchaseOrder, purchaseOrderId]);
 
   const handleCancel = async () => {
     if (!purchaseOrderId) {
@@ -40,6 +45,27 @@ export default function PurchaseOrderDetail() {
       setError(null);
     } catch {
       setError('Unable to cancel purchase order.');
+    }
+  };
+
+  const handleFulfill = async () => {
+    if (!purchaseOrderId || !purchaseOrder) {
+      return;
+    }
+
+    const firstLineItem = purchaseOrder.lineItems[0];
+    if (!firstLineItem) {
+      return;
+    }
+
+    try {
+      const fulfilled = await fulfillPurchaseOrder(purchaseOrderId, [{ lineItemId: firstLineItem.id, quantity: 1, shipmentReference: 'SHIP-001' }]);
+      setPurchaseOrder(fulfilled);
+      const nextHistory = await getPurchaseOrderFulfillmentHistory(purchaseOrderId);
+      setHistory(nextHistory);
+      setError(null);
+    } catch {
+      setError('Unable to fulfill purchase order.');
     }
   };
 
@@ -79,7 +105,30 @@ export default function PurchaseOrderDetail() {
       {['Draft', 'Submitted', 'Approved'].includes(purchaseOrder.status) && (
         <Button onClick={handleCancel}>{loading ? 'Cancelling...' : 'Cancel Purchase Order'}</Button>
       )}
+      {['Approved', 'Partially Fulfilled'].includes(purchaseOrder.status) && (
+        <Button onClick={handleFulfill}>{loading ? 'Fulfilling...' : 'Record Partial Fulfillment'}</Button>
+      )}
       <Button onClick={() => navigate(`/purchase-orders/${purchaseOrder.id}/edit`, { state: { purchaseOrder } })}>Edit Draft</Button>
+
+      {history.length > 0 && (
+        <div style={{ marginTop: '1rem' }}>
+          <h3>Fulfillment History</h3>
+          <ul>
+            {history.map((entry) => (
+              <li key={entry.lineItemId}>
+                {entry.description}: {entry.fulfilledQuantity}/{entry.quantity} fulfilled
+                <ul>
+                  {entry.events.map((event) => (
+                    <li key={event.id}>
+                      {event.quantity} units{event.shipmentReference ? ` via ${event.shipmentReference}` : ''}
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

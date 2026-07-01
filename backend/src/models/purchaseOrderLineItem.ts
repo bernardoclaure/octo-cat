@@ -4,6 +4,7 @@ export interface PurchaseOrderLineItem {
   productId: string;
   description: string;
   quantity: number;
+  fulfilledQuantity?: number;
   expectedUnitPrice: number;
   expectedTotalPrice: number;
   createdAt: string;

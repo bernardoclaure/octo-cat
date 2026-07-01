@@ -61,6 +61,13 @@ if (dbPath !== ':memory:' && dbPath !== '') {
 
 const db = new SqliteDatabase(dbPath);
 
+const ensureColumnExists = (tableName: string, columnName: string, definition: string) => {
+  const existingColumns = db.prepare(`SELECT name FROM pragma_table_info('${tableName}')`).all() as Array<{ name: string }>;
+  if (!existingColumns.some((column) => column.name === columnName)) {
+    db.exec(`ALTER TABLE ${tableName} ADD COLUMN ${definition}`);
+  }
+};
+
 // Initialize schema if it does not exist
 const ddl = `
 CREATE TABLE IF NOT EXISTS purchase_orders (
@@ -85,11 +92,25 @@ CREATE TABLE IF NOT EXISTS purchase_order_line_items (
   productId TEXT NOT NULL,
   description TEXT,
   quantity INTEGER NOT NULL,
+  fulfilledQuantity INTEGER DEFAULT 0,
   expectedUnitPrice REAL NOT NULL,
   expectedTotalPrice REAL NOT NULL,
   createdAt TEXT NOT NULL,
   updatedAt TEXT NOT NULL,
   FOREIGN KEY(purchaseOrderId) REFERENCES purchase_orders(id)
+);
+
+CREATE TABLE IF NOT EXISTS fulfillment_events (
+  id TEXT PRIMARY KEY,
+  purchaseOrderId TEXT NOT NULL,
+  lineItemId TEXT NOT NULL,
+  quantity INTEGER NOT NULL,
+  shipmentReference TEXT,
+  fulfilledAt TEXT NOT NULL,
+  createdAt TEXT NOT NULL,
+  updatedAt TEXT NOT NULL,
+  FOREIGN KEY(purchaseOrderId) REFERENCES purchase_orders(id),
+  FOREIGN KEY(lineItemId) REFERENCES purchase_order_line_items(id)
 );
 
 CREATE TABLE IF NOT EXISTS notifications (
@@ -106,5 +127,6 @@ CREATE TABLE IF NOT EXISTS notifications (
 `;
 
 db.exec(ddl);
+ensureColumnExists('purchase_order_line_items', 'fulfilledQuantity', 'fulfilledQuantity INTEGER DEFAULT 0');
 
 export default db;

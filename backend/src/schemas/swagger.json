@@ -37,10 +37,20 @@
     },
     "/api/purchase-orders/{purchaseOrderId}/fulfill": {
       "post": {
-        "summary": "Fulfill an approved purchase order",
+        "summary": "Record partial or full fulfillment for an approved purchase order",
         "responses": {
           "200": {
-            "description": "Purchase order fulfilled"
+            "description": "Purchase order fulfillment recorded"
+          }
+        }
+      }
+    },
+    "/api/purchase-orders/{purchaseOrderId}/fulfillment-history": {
+      "get": {
+        "summary": "Get fulfillment history for a purchase order",
+        "responses": {
+          "200": {
+            "description": "Fulfillment history returned"
           }
         }
       }

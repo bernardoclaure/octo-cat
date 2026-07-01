@@ -3,7 +3,10 @@ import {
   cancelPurchaseOrder,
   createPurchaseOrder,
   getPurchaseOrder,
+  getPurchaseOrderFulfillmentHistory,
+  fulfillPurchaseOrder,
   updatePurchaseOrder,
+  FulfillmentHistoryEntry,
   PurchaseOrderPayload,
   PurchaseOrderResponse,
 } from '../api/purchaseOrderApi';
@@ -13,6 +16,8 @@ interface PurchaseOrderContextValue {
   updatePurchaseOrder: (purchaseOrderId: string, payload: PurchaseOrderPayload) => Promise<PurchaseOrderResponse>;
   getPurchaseOrder: (purchaseOrderId: string) => Promise<PurchaseOrderResponse>;
   cancelPurchaseOrder: (purchaseOrderId: string) => Promise<PurchaseOrderResponse>;
+  fulfillPurchaseOrder: (purchaseOrderId: string, lineItemFulfillments: { lineItemId: string; quantity: number; shipmentReference?: string }[]) => Promise<PurchaseOrderResponse>;
+  getPurchaseOrderFulfillmentHistory: (purchaseOrderId: string) => Promise<FulfillmentHistoryEntry[]>;
   loading: boolean;
 }
 
@@ -57,8 +62,26 @@ export const PurchaseOrderProvider = ({ children }: { children: ReactNode }) => 
     }
   }, []);
 
+  const fulfill = useCallback(async (purchaseOrderId: string, lineItemFulfillments: { lineItemId: string; quantity: number; shipmentReference?: string }[]) => {
+    setLoading(true);
+    try {
+      return await fulfillPurchaseOrder(purchaseOrderId, lineItemFulfillments);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getHistory = useCallback(async (purchaseOrderId: string) => {
+    setLoading(true);
+    try {
+      return await getPurchaseOrderFulfillmentHistory(purchaseOrderId);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return (
-    <PurchaseOrderContext.Provider value={{ createPurchaseOrder: create, updatePurchaseOrder: update, getPurchaseOrder: get, cancelPurchaseOrder: cancel, loading }}>
+    <PurchaseOrderContext.Provider value={{ createPurchaseOrder: create, updatePurchaseOrder: update, getPurchaseOrder: get, cancelPurchaseOrder: cancel, fulfillPurchaseOrder: fulfill, getPurchaseOrderFulfillmentHistory: getHistory, loading }}>
       {children}
     </PurchaseOrderContext.Provider>
   );

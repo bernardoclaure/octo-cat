@@ -5,6 +5,7 @@ import {
   createDraftPurchaseOrder,
   fulfillApprovedPurchaseOrder,
   getDraftPurchaseOrder,
+  getPurchaseOrderFulfillmentHistory,
   submitPurchaseOrder,
   updateDraftPurchaseOrder,
 } from '../services/purchaseOrderService';
@@ -57,11 +58,20 @@ router.post('/:purchaseOrderId/approve', (req: Request, res: Response) => {
 
 router.post('/:purchaseOrderId/fulfill', (req: Request, res: Response) => {
   const { purchaseOrderId } = req.params;
-  const po = fulfillApprovedPurchaseOrder(purchaseOrderId);
+  const po = fulfillApprovedPurchaseOrder(purchaseOrderId, req.body?.lineItemFulfillments);
   if (!po) {
     return res.status(400).json({ error: 'Unable to fulfill purchase order' });
   }
   res.json(po);
+});
+
+router.get('/:purchaseOrderId/fulfillment-history', (req: Request, res: Response) => {
+  const { purchaseOrderId } = req.params;
+  const history = getPurchaseOrderFulfillmentHistory(purchaseOrderId);
+  if (!history) {
+    return res.status(404).json({ error: 'Purchase order not found' });
+  }
+  res.json(history);
 });
 
 router.post('/:purchaseOrderId/cancel', (req: Request, res: Response) => {

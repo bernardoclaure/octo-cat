@@ -52,10 +52,13 @@ Expected result:
 
 1. Create or submit a PO with a total above $10,000.
 2. Call the approval endpoint.
-3. Call the fulfillment endpoint.
+3. Call the fulfillment endpoint with a partial shipment for one line item.
+4. Call the fulfillment-history endpoint to inspect the event history.
 
 Expected result:
-- The status becomes Approved and then Fulfilled.
+- The status becomes Approved and then Partially Fulfilled after the first shipment.
+- The history endpoint returns the shipment events for the PO and its line items.
+- A subsequent shipment that completes the outstanding quantity moves the PO to Fulfilled.
 
 ## Test Commands
 
