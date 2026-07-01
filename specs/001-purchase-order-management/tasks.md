@@ -102,14 +102,14 @@ description: "Task list for Purchase Order Management feature implementation"
 
 ### Tests for User Story 3
 
-- [ ] T031 [P] [US3] Create contract test for `POST /api/purchase-orders/:purchaseOrderId/approve` and `POST /api/purchase-orders/:purchaseOrderId/fulfill` in `backend/tests/contract/test_purchase_order_approval.spec.ts`
-- [ ] T032 [P] [US3] Create integration test for approval and fulfillment rules in `backend/tests/integration/test_purchase_order_approval.spec.ts`
+- [X] T031 [P] [US3] Create contract test for `POST /api/purchase-orders/:purchaseOrderId/approve` and `POST /api/purchase-orders/:purchaseOrderId/fulfill` in `backend/tests/contract/test_purchase_order_approval.spec.ts`
+- [X] T032 [P] [US3] Create integration test for approval and fulfillment rules in `backend/tests/integration/test_purchase_order_approval.spec.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T033 [US3] Implement approval workflow and guard rules in `backend/src/services/approvalService.ts`
-- [ ] T034 [US3] Implement fulfill transition rules in `backend/src/services/purchaseOrderService.ts`
-- [ ] T035 [US3] Add approval and fulfillment endpoints in `backend/src/routes/purchaseOrderRoutes.ts`
+- [X] T033 [US3] Implement approval workflow and guard rules in `backend/src/services/approvalService.ts`
+- [X] T034 [US3] Implement fulfill transition rules in `backend/src/services/purchaseOrderService.ts`
+- [X] T035 [US3] Add approval and fulfillment endpoints in `backend/src/routes/purchaseOrderRoutes.ts`
 - [ ] T036 [US3] Create approver dashboard page in `frontend/src/pages/approver/ApprovalDashboard.tsx`
 - [ ] T037 [US3] Add approve and fulfill actions to `frontend/src/pages/purchase-orders/PurchaseOrderDetail.tsx`
 - [ ] T038 [US3] Enforce approver role and workflow state in `frontend/src/context/purchaseOrderContext.tsx`

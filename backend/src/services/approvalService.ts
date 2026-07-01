@@ -22,3 +22,21 @@ export const approvePurchaseOrder = (purchaseOrderId: string, approverId: string
   updatePurchaseOrder(updated);
   return updated;
 };
+
+export const fulfillPurchaseOrder = (purchaseOrderId: string) => {
+  const po = getPurchaseOrderById(purchaseOrderId);
+  if (!po || po.status !== 'Approved') {
+    return undefined;
+  }
+
+  const now = new Date().toISOString();
+  const updated: PurchaseOrder = {
+    ...po,
+    status: 'Fulfilled',
+    fulfilledAt: now,
+    updatedAt: now,
+  };
+
+  updatePurchaseOrder(updated);
+  return updated;
+};

@@ -4,6 +4,7 @@ import { replaceLineItems, getLineItems } from '../repositories/lineItemReposito
 import { PurchaseOrder, PurchaseOrderStatus } from '../models/purchaseOrder';
 import { PurchaseOrderLineItem } from '../models/purchaseOrderLineItem';
 import { createSupplierNotification } from './notificationService';
+import { approvePurchaseOrder as approvePurchaseOrderByRule, fulfillPurchaseOrder as fulfillPurchaseOrderByRule } from './approvalService';
 
 export type PurchaseOrderWithLineItems = PurchaseOrder & {
   lineItems: PurchaseOrderLineItem[];
@@ -100,6 +101,28 @@ export const submitPurchaseOrder = (purchaseOrderId: string) => {
 
   return {
     ...updated,
+    lineItems: getLineItems(purchaseOrderId),
+  };
+};
+
+export const approveSubmittedPurchaseOrder = (purchaseOrderId: string, approverId: string) => {
+  const result = approvePurchaseOrderByRule(purchaseOrderId, approverId);
+  if (!result) {
+    return undefined;
+  }
+  return {
+    ...result,
+    lineItems: getLineItems(purchaseOrderId),
+  };
+};
+
+export const fulfillApprovedPurchaseOrder = (purchaseOrderId: string) => {
+  const result = fulfillPurchaseOrderByRule(purchaseOrderId);
+  if (!result) {
+    return undefined;
+  }
+  return {
+    ...result,
     lineItems: getLineItems(purchaseOrderId),
   };
 };
